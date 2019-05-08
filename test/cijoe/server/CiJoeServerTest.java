@@ -11,7 +11,7 @@ public class CiJoeServerTest {
 
     @Test
     public void create() throws IOException {
-        CiJoeServer server = new CiJoeServer();
+        CiJoeServer.main(null);
 
     }
 }
