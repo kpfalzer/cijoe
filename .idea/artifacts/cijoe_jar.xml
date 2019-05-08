@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="cijoe:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/cijoe_jar</output-path>
+    <root id="archive" name="cijoe.jar">
+      <element id="module-output" name="cijoe" />
+    </root>
+  </artifact>
+</component>
