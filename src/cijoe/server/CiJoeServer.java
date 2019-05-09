@@ -1,29 +1,34 @@
 package cijoe.server;
 
+import cijoe.Util;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 public class CiJoeServer {
-    public CiJoeServer(int port, Map<String, HttpHandler> handlers) throws IOException {
-        __server = create(port);
+    public CiJoeServer(InetAddress addr, int port, Map<String, HttpHandler> handlers) throws IOException {
+        __server = create(addr, port);
         handlers.forEach((k, v) -> {
             __server.createContext(k, v);
         });
         __start();
     }
 
+    public CiJoeServer(InetAddress addr, int port) throws IOException {
+        this(addr, port, __DEFAULT_HANDLERS);
+    }
+
     public CiJoeServer() throws IOException {
-        this(__PORT, __DEFAULT_HANDLERS);
+        this(null, __PORT, __DEFAULT_HANDLERS);
     }
 
     private void __start() {
@@ -31,8 +36,8 @@ public class CiJoeServer {
         __server.start();
     }
 
-    private HttpServer create(int port) throws IOException {
-        InetSocketAddress sockAddr = new InetSocketAddress(port);
+    private HttpServer create(InetAddress addr, int port) throws IOException {
+        InetSocketAddress sockAddr = new InetSocketAddress(addr, port);
         return HttpServer.create(sockAddr, __BACKLOG);
     }
 
@@ -77,6 +82,16 @@ public class CiJoeServer {
     }
 
     public static void main(String[] argv) throws IOException {
-        CiJoeServer server = new CiJoeServer();
+        if (2 == argv.length) {
+            byte addr[] = Util.toByte(Arrays
+                    .stream(argv[0].split("\\."))
+                    .map(Integer::parseInt)
+                    .toArray(Integer[]::new));
+            InetAddress iaddr = InetAddress.getByAddress(addr);
+            Integer port = Integer.parseInt(argv[1]);
+            CiJoeServer server = new CiJoeServer(iaddr, port);
+        } else {
+            CiJoeServer server = new CiJoeServer();
+        }
     }
 }
