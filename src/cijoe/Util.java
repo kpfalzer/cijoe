@@ -9,4 +9,10 @@ public class Util {
         }
         return rval;
     }
+
+    public static void invariant(boolean cond, String message) {
+        if (!cond) {
+            throw new RuntimeException(message);
+        }
+    }
 }

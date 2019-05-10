@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import static java.util.Objects.nonNull;
+
 public class CiJoeServer {
     public CiJoeServer(InetAddress addr, int port, Map<String, HttpHandler> handlers) throws IOException {
         __server = create(addr, port);
@@ -21,6 +23,20 @@ public class CiJoeServer {
             __server.createContext(k, v);
         });
         __start();
+    }
+
+    public static CiJoeServer create(String addr, String port, Map<String, HttpHandler> handlers) throws IOException {
+        byte haddr[] = Util.toByte(Arrays
+                .stream(addr.split("\\."))
+                .map(Integer::parseInt)
+                .toArray(Integer[]::new));
+        InetAddress iaddr = InetAddress.getByAddress(haddr);
+        Integer hport = Integer.parseInt(port);
+        return new CiJoeServer(iaddr, hport, handlers);
+    }
+
+    public static CiJoeServer create(String addr, String port) throws IOException {
+        return create(addr, port, __DEFAULT_HANDLERS);
     }
 
     public CiJoeServer(InetAddress addr, int port) throws IOException {
@@ -82,14 +98,8 @@ public class CiJoeServer {
     }
 
     public static void main(String[] argv) throws IOException {
-        if (2 == argv.length) {
-            byte addr[] = Util.toByte(Arrays
-                    .stream(argv[0].split("\\."))
-                    .map(Integer::parseInt)
-                    .toArray(Integer[]::new));
-            InetAddress iaddr = InetAddress.getByAddress(addr);
-            Integer port = Integer.parseInt(argv[1]);
-            CiJoeServer server = new CiJoeServer(iaddr, port);
+        if (nonNull(argv) && 2 == argv.length) {
+            CiJoeServer server = CiJoeServer.create(argv[0], argv[1]);
         } else {
             CiJoeServer server = new CiJoeServer();
         }
