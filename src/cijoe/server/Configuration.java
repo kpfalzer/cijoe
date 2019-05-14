@@ -14,8 +14,11 @@ import static java.util.Objects.nonNull;
 public class Configuration {
     private static Configuration __THE_ONE;
 
+    private Configuration() throws IOException {
+        this(null);
+    }
+
     private Configuration(String fname) throws IOException {
-        super();
         __initialize(fname);
     }
 
@@ -23,8 +26,13 @@ public class Configuration {
         invariant(isNull(__THE_ONE), "Cannot instance another singleton");
         __THE_ONE = this;
         __fileName = fname;
-        __properties = new Properties();
-        __properties.load(new FileReader(fname));
+        __properties = __getDefaults();
+        if (nonNull(fname)) {
+            __properties.load(new FileReader(fname));
+        }
+        __DEFAULTS
+                .keySet()
+                .forEach(k -> invariant(__properties.containsKey(k)));
     }
 
     public static void create(String fname) throws IOException {
@@ -32,16 +40,45 @@ public class Configuration {
     }
 
     public static String getProperty(String key) {
-        invariant(hasProperty(key), "No value for key: "+key);
-        String value = __THE_ONE.__properties.getProperty(key);
+        invariant(hasProperty(key), "No value for key: " + key);
+        String value = __getTheOne().__properties.getProperty(key);
         invariant(nonNull(value));
         return value;
     }
 
     public static boolean hasProperty(String key) {
-        return __THE_ONE.__properties.containsKey(key);
+        return __getTheOne().__properties.containsKey(key);
+    }
+
+    private static Configuration __getTheOne() {
+        if (isNull(__THE_ONE)) {
+            try {
+                new Configuration();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return __THE_ONE;
     }
 
     private String __fileName;
     private Properties __properties;
+
+    private static final Properties __DEFAULTS = new Properties();
+    private static Properties __USE_DEFAULTS = null;
+
+    static {
+        __DEFAULTS.setProperty("root", "/var/lib/cijoe");
+    }
+
+    private static Properties __getDefaults() throws IOException {
+        String fname = System.getProperty("defaultPropertyFileName");
+        Properties defaults = new Properties();
+        if (nonNull(fname)) {
+            defaults.load(new FileReader(fname));
+        } else {
+            defaults.putAll(__DEFAULTS);
+        }
+        return defaults;
+    }
 }
