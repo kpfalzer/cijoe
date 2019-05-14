@@ -15,4 +15,8 @@ public class Util {
             throw new RuntimeException(message);
         }
     }
+
+    public static void invariant(boolean cond) {
+        invariant(cond, "Invariant failed");
+    }
 }
