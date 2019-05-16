@@ -1,4 +1,4 @@
-package cijoe.server;
+package cijoe;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -69,10 +69,11 @@ public class Configuration {
 
     static {
         __DEFAULTS.setProperty("root", "/var/lib/cijoe");
+        __DEFAULTS.setProperty("logFname", "/var/log/cijoe.log");
     }
 
     private static Properties __getDefaults() throws IOException {
-        String fname = System.getProperty("defaultPropertyFileName");
+        String fname = System.getProperty("defaultPropertyFname");
         Properties defaults = new Properties();
         if (nonNull(fname)) {
             defaults.load(new FileReader(fname));
