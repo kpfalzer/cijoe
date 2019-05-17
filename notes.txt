@@ -1,0 +1,19 @@
+14-may
+1. env var CIJOE_JOBNAME : foo/bar
+2. CIJOE_JOBID : id of current job
+3. CIJOE_CWD : fully qualified name of (running) job work area
+             : <cijoe_root>/work/${CIJOE_JOBNAME}/${CIJOE_JOBID}
+4: CIJOE_LOGDIR : fully qualified name of (running) job log dir
+			    : <cijoe_root>/log/${CIJOE_JOBNAME}/${CIJOE_JOBID}
+5: CIJOE_ARTIFACTDIR : ... of artifacts
+                     : <cijoe_root>/artifact/${CIJOE_JOBNAME}/${CIJOE_JOBID}
+
+6: job phases:
+		setup, test, artifact, cleanup
+		+ make easy to add phase(s)...
+		+ phase(s) can be empty too
+
+7: create stdout/err logs for each phase
+
+8: envision using some async web-interface for log watching...
+   https://developers.google.com/web/fundamentals/primers/async-functions

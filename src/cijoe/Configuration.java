@@ -69,7 +69,7 @@ public class Configuration {
 
     static {
         __DEFAULTS.setProperty("root", "/var/lib/cijoe");
-        __DEFAULTS.setProperty("logFname", "/var/log/cijoe.log");
+        __DEFAULTS.setProperty("logFname", "/var/lib/cijoe/cijoe.log");
     }
 
     private static Properties __getDefaults() throws IOException {
